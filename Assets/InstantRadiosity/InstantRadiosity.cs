@@ -57,6 +57,14 @@ public class InstantRadiosity : MonoBehaviour
             dir = -dir;
 
         return dir;
+
+        //Vector3 dir = Random.onUnitSphere;
+        //while (Vector3.Dot(dir, normal) < 0)
+        //{
+        //    dir = Random.onUnitSphere;
+        //}
+
+        //return dir;
     }
 
     void CreateVirtualPointLight(Vector3 pos, Color color, float intensity)
