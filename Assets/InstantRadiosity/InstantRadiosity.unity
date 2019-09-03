@@ -210,7 +210,6 @@ GameObject:
   m_Component:
   - component: {fileID: 452168873}
   - component: {fileID: 452168874}
-  - component: {fileID: 452168875}
   m_Layer: 0
   m_Name: Light
   m_TagString: Untagged
@@ -241,7 +240,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 2
-  m_Color: {r: 0.95, g: 0.95, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -268,19 +267,6 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &452168875
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 452168872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a19ec250cd052dc428993272d8516544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  photonNum: 32
-  bounces: 16
 --- !u!1 &724948730
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,6 +276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 724948731}
   - component: {fileID: 724948732}
+  - component: {fileID: 724948733}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -347,6 +334,20 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &724948733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 724948730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19ec250cd052dc428993272d8516544, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceLight: {fileID: 452168874}
+  photonNum: 32
+  bounces: 16
 --- !u!1 &731487961
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,29 +4,34 @@ using UnityEngine;
 
 public class InstantRadiosity : MonoBehaviour
 {
-    GameObject vplsGo;
+    public Light sourceLight;
+    public int photonNum = 16;
+    public int bounces = 8;
+
 	void Start ()
     {
         this.GenerateVPLs();
 	}
 
-    public int photonNum = 16;
-    public int bounces = 8;
-
     List<Light> vpls = new List<Light>();
     void GenerateVPLs()
     {
+        if (this.sourceLight == null)
+            return;
+
+        Vector3 sourceLightPos = this.sourceLight.transform.position;
+
         RaycastHit raycastHit = new RaycastHit();
 
         for (int i = 0; i < photonNum; i++)
         {
             Vector3 dir = this.GenerateHemisphereDir(Vector3.down);
 
-            Color lightCol = Color.white;
+            Color lightCol = this.sourceLight.color;
 
             for (int j = 0; j < bounces; j++)
             {
-                if (Physics.Raycast(this.transform.position, dir, out raycastHit))
+                if (Physics.Raycast(sourceLightPos, dir, out raycastHit))
                 {
                     MeshRenderer renderer = raycastHit.transform.GetComponent<MeshRenderer>();
                     if(renderer != null)
@@ -67,6 +72,8 @@ public class InstantRadiosity : MonoBehaviour
         //return dir;
     }
 
+
+    GameObject vplsGo;
     void CreateVirtualPointLight(Vector3 pos, Color color, float intensity)
     {
         GameObject go = new GameObject();
