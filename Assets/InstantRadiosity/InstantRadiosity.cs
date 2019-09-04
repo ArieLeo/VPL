@@ -15,7 +15,7 @@ public class InstantRadiosity : MonoBehaviour
 
 	void Start ()
     {
-        material = new Material(Shader.Find("Hidden/IRPostProcess"));
+        material = new Material(Shader.Find("VPL/IRPostProcess"));
         material.SetFloat("_PhotonNum", this.photonNum);
 
         this.GenerateVPLs();
@@ -30,6 +30,7 @@ public class InstantRadiosity : MonoBehaviour
         this.sourceLight.enabled = false;
 
         Vector3 sourceLightPos = this.sourceLight.transform.position;
+        float sourceIntensity = this.sourceLight.intensity;
 
         RaycastHit raycastHit = new RaycastHit();
 
@@ -38,9 +39,11 @@ public class InstantRadiosity : MonoBehaviour
             Color lightCol = this.sourceLight.color;
 
             //direct Light
-            this.CreateVirtualPointLight(sourceLightPos, lightCol, 1.0f, this.sourceLight.range);
+            this.CreateVirtualPointLight(sourceLightPos, lightCol, sourceIntensity, this.sourceLight.range);
 
             Vector3 dir = this.GenerateHemisphereDir(Vector3.down);
+
+            float intensity = sourceIntensity;
 
             for (int j = 0; j < bounces; j++)
             {
@@ -51,7 +54,8 @@ public class InstantRadiosity : MonoBehaviour
                     {
                         lightCol *= renderer.sharedMaterial.color;
 
-                        this.CreateVirtualPointLight(raycastHit.point + raycastHit.normal * 0.001f, lightCol, 1.0f, 1000);
+                        //intensity *= Mathf.Clamp01(Vector3.Dot(raycastHit.normal, -dir));
+                        this.CreateVirtualPointLight(raycastHit.point + raycastHit.normal * 0.001f, lightCol, intensity, 10);
 
                         dir = this.GenerateHemisphereDir(raycastHit.normal);
                     }
@@ -65,6 +69,8 @@ public class InstantRadiosity : MonoBehaviour
                     break;
             }
         }
+
+        Debug.Log(this.vpls.Count);
     }
 
     Vector3 GenerateHemisphereDir(Vector3 normal)
@@ -103,7 +109,7 @@ public class InstantRadiosity : MonoBehaviour
 
         Light light = go.AddComponent<Light>();
         light.type = LightType.Point;
-        light.range = 10;
+        light.range = range;
         light.color = color;
         light.intensity = intensity;
         light.shadowResolution = this.shadowResolution;

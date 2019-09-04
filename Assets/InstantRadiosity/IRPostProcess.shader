@@ -1,4 +1,4 @@
-﻿Shader "Hidden/IRPostProcess"
+﻿Shader "VPL/IRPostProcess"
 {
 	Properties
 	{
