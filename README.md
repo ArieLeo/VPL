@@ -3,7 +3,7 @@
 ## DirectOnly
 ![image](Screenshot/DirectOnly.png)
 
-## Progressive
+## ProgressiveBaked
 ![image](Screenshot/Progressive.png)
 
 ## InstantRadiosity
