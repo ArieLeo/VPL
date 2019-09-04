@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class InstantRadiosity : MonoBehaviour
 {
@@ -8,8 +9,15 @@ public class InstantRadiosity : MonoBehaviour
     public int photonNum = 16;
     public int bounces = 8;
 
+    public LightShadowResolution shadowResolution = LightShadowResolution.Medium;
+
+    private Material material;
+
 	void Start ()
     {
+        material = new Material(Shader.Find("Hidden/IRPostProcess"));
+        material.SetFloat("_PhotonNum", this.photonNum);
+
         this.GenerateVPLs();
 	}
 
@@ -19,15 +27,20 @@ public class InstantRadiosity : MonoBehaviour
         if (this.sourceLight == null)
             return;
 
+        this.sourceLight.enabled = false;
+
         Vector3 sourceLightPos = this.sourceLight.transform.position;
 
         RaycastHit raycastHit = new RaycastHit();
 
         for (int i = 0; i < photonNum; i++)
         {
-            Vector3 dir = this.GenerateHemisphereDir(Vector3.down);
-
             Color lightCol = this.sourceLight.color;
+
+            //direct Light
+            this.CreateVirtualPointLight(sourceLightPos, lightCol, 1.0f, this.sourceLight.range);
+
+            Vector3 dir = this.GenerateHemisphereDir(Vector3.down);
 
             for (int j = 0; j < bounces; j++)
             {
@@ -38,7 +51,7 @@ public class InstantRadiosity : MonoBehaviour
                     {
                         lightCol *= renderer.sharedMaterial.color;
 
-                        this.CreateVirtualPointLight(raycastHit.point + raycastHit.normal * 0.001f, lightCol, 1.0f / photonNum);
+                        this.CreateVirtualPointLight(raycastHit.point + raycastHit.normal * 0.001f, lightCol, 1.0f, 1000);
 
                         dir = this.GenerateHemisphereDir(raycastHit.normal);
                     }
@@ -74,7 +87,7 @@ public class InstantRadiosity : MonoBehaviour
 
 
     GameObject vplsGo;
-    void CreateVirtualPointLight(Vector3 pos, Color color, float intensity)
+    void CreateVirtualPointLight(Vector3 pos, Color color, float intensity, float range)
     {
         GameObject go = new GameObject();
         go.transform.position = pos;
@@ -90,12 +103,18 @@ public class InstantRadiosity : MonoBehaviour
 
         Light light = go.AddComponent<Light>();
         light.type = LightType.Point;
-        light.range = 1000;
+        light.range = 10;
         light.color = color;
         light.intensity = intensity;
+        light.shadowResolution = this.shadowResolution;
         light.lightmapBakeType = LightmapBakeType.Realtime;
         light.shadows = LightShadows.Hard;
 
         this.vpls.Add(light);
+    }
+
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        Graphics.Blit(source, destination, material);
     }
 }
